@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Builder — Fronty</title>
+    <link rel="stylesheet" href="css/builder.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏗️</text></svg>">
+</head>
+<body class="builder-body">
+
+    <!-- ═══════ TOP TOOLBAR ═══════ -->
+    <header class="builder-toolbar">
+        <div class="toolbar-left">
+            <a href="admin.html" class="toolbar-back-btn" title="Back to Admin">
+                ← <span>Admin</span>
+            </a>
+            <div class="toolbar-divider"></div>
+            <div class="toolbar-site-name">
+                <span class="toolbar-icon">🏗️</span>
+                <span id="builderPageLabel">Page Builder</span>
+            </div>
+            <div class="toolbar-divider"></div>
+            <select id="pageSelect" class="page-select" title="Choose a page to edit">
+                <option value="index.html">🏪 Store Home</option>
+                <option value="blank.html">📄 Blank Page</option>
+            </select>
+            <button id="newPageBtn" class="toolbar-btn" title="Start a fresh blank page from scratch">＋ New Page</button>
+        </div>
+
+        <div class="toolbar-center">
+            <!-- Device Preview -->
+            <div class="device-switcher">
+                <button class="device-btn active" data-device="desktop" title="Desktop">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                </button>
+                <button class="device-btn" data-device="tablet" title="Tablet">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="17" r="1"/></svg>
+                </button>
+                <button class="device-btn" data-device="mobile" title="Mobile">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg>
+                </button>
+            </div>
+            <div class="canvas-tools">
+                <button id="zoomOutBtn" class="canvas-tool-btn" title="Zoom out">-</button>
+                <select id="zoomSelect" class="zoom-select" title="Canvas zoom">
+                    <option value="0.5">50%</option>
+                    <option value="0.75">75%</option>
+                    <option value="1" selected>100%</option>
+                    <option value="1.25">125%</option>
+                    <option value="1.5">150%</option>
+                </select>
+                <button id="zoomInBtn" class="canvas-tool-btn" title="Zoom in">+</button>
+                <button id="gridToggleBtn" class="canvas-tool-btn" title="Toggle canvas grid">Grid</button>
+                <button id="outlineToggleBtn" class="canvas-tool-btn active" title="Toggle editor guides">Guides</button>
+            </div>
+        </div>
+
+        <div class="toolbar-right">
+            <button id="undoBtn" class="toolbar-btn" title="Undo (Ctrl+Z)" disabled>↩️ Undo</button>
+            <button id="redoBtn" class="toolbar-btn" title="Redo (Ctrl+Y)" disabled>↪️ Redo</button>
+            <div class="toolbar-divider"></div>
+            <button id="previewBtn" class="toolbar-btn" title="Open preview">👁️ Preview</button>
+            <button id="copyHtmlBtn" class="toolbar-btn" title="Copy clean HTML">Copy HTML</button>
+            <button id="exportBtn" class="toolbar-btn" title="Export HTML">⬇️ Export</button>
+            <button id="saveBtn" class="toolbar-btn-primary">💾 Save</button>
+        </div>
+    </header>
+
+    <!-- ═══════ MAIN LAYOUT ═══════ -->
+    <div class="builder-layout">
+
+        <!-- LEFT PANEL: Elements Library -->
+        <aside class="builder-left-panel" id="leftPanel">
+            <div class="panel-header">
+                <div class="panel-tabs">
+                    <button class="panel-tab active" data-panel="elements">Elements</button>
+                    <button class="panel-tab" data-panel="sections">Sections</button>
+                    <button class="panel-tab" data-panel="history">History</button>
+                    <button class="panel-tab" data-panel="settings">Settings</button>
+                </div>
+            </div>
+
+            <!-- Elements Library -->
+            <div class="panel-content active" id="panel-elements">
+                <div class="elements-search">
+                    <input type="text" id="elementSearch" class="element-search-input" placeholder="🔍 Search elements...">
+                </div>
+
+                <div class="elements-groups">
+                    <!-- Usage tip -->
+                    <div style="margin:0.25rem 0.5rem 0.75rem;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:0.625rem;padding:0.6rem 0.75rem;font-size:0.72rem;color:#94a3b8;line-height:1.5">
+                        💡 <strong style="color:#a5b4fc">Click</strong> any card to add it, or <strong style="color:#a5b4fc">drag</strong> it to a section
+                    </div>
+
+                    <div class="element-group">
+                        <div class="element-group-label">📝 Content</div>
+                        <div class="elements-grid">
+                            <div class="el-card" draggable="true" data-type="heading">
+                                <div class="el-card-icon">H1</div>
+                                <div class="el-card-name">Heading</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="text">
+                                <div class="el-card-icon">¶</div>
+                                <div class="el-card-name">Text</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="button">
+                                <div class="el-card-icon">⬜</div>
+                                <div class="el-card-name">Button</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="badge">
+                                <div class="el-card-icon">🏷️</div>
+                                <div class="el-card-name">Badge</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="divider">
+                                <div class="el-card-icon">—</div>
+                                <div class="el-card-name">Divider</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="spacer">
+                                <div class="el-card-icon">↕</div>
+                                <div class="el-card-name">Spacer</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="element-group">
+                        <div class="element-group-label">🎨 Layout</div>
+                        <div class="elements-grid">
+                            <div class="el-card" draggable="true" data-type="columns-2">
+                                <div class="el-card-icon">⬛⬛</div>
+                                <div class="el-card-name">2 Columns</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="columns-3">
+                                <div class="el-card-icon">⬛⬛⬛</div>
+                                <div class="el-card-name">3 Columns</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="columns-4">
+                                <div class="el-card-icon">▪▪▪▪</div>
+                                <div class="el-card-name">4 Columns</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="card">
+                                <div class="el-card-icon">🪟</div>
+                                <div class="el-card-name">Card</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="stat-box">
+                                <div class="el-card-icon">📊</div>
+                                <div class="el-card-name">Stat Box</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="cta-banner">
+                                <div class="el-card-icon">📣</div>
+                                <div class="el-card-name">CTA Banner</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="navbar">
+                                <div class="el-card-icon">NAV</div>
+                                <div class="el-card-name">Navbar</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="hero-block">
+                                <div class="el-card-icon">HERO</div>
+                                <div class="el-card-name">Hero Block</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="element-group">
+                        <div class="element-group-label">Commerce</div>
+                        <div class="elements-grid">
+                            <div class="el-card" draggable="true" data-type="product-card">
+                                <div class="el-card-icon">PR</div>
+                                <div class="el-card-name">Product Card</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="product-grid">
+                                <div class="el-card-icon">PG</div>
+                                <div class="el-card-name">Product Grid</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="category-strip">
+                                <div class="el-card-icon">CH</div>
+                                <div class="el-card-name">Categories</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="trust-badges">
+                                <div class="el-card-icon">TR</div>
+                                <div class="el-card-name">Trust Badges</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="comparison-table">
+                                <div class="el-card-icon">VS</div>
+                                <div class="el-card-name">Compare</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="element-group">
+                        <div class="element-group-label">🖼️ Media</div>
+                        <div class="elements-grid">
+                            <div class="el-card" draggable="true" data-type="image">
+                                <div class="el-card-icon">🖼️</div>
+                                <div class="el-card-name">Image</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="icon">
+                                <div class="el-card-icon">⭐</div>
+                                <div class="el-card-name">Icon/Emoji</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="video">
+                                <div class="el-card-icon">▶️</div>
+                                <div class="el-card-name">Video</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="slider">
+                                <div class="el-card-icon">🎞️</div>
+                                <div class="el-card-name">Slider</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="map-embed">
+                                <div class="el-card-icon">🗺️</div>
+                                <div class="el-card-name">Map</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="full-banner">
+                                <div class="el-card-icon">🖼</div>
+                                <div class="el-card-name">Full Banner</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="element-group">
+                        <div class="element-group-label">📋 Forms</div>
+                        <div class="elements-grid">
+                            <div class="el-card" draggable="true" data-type="form-input">
+                                <div class="el-card-icon">✏️</div>
+                                <div class="el-card-name">Input</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="form-textarea">
+                                <div class="el-card-icon">📄</div>
+                                <div class="el-card-name">Textarea</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="form-select">
+                                <div class="el-card-icon">▽</div>
+                                <div class="el-card-name">Dropdown</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="form-container">
+                                <div class="el-card-icon">📮</div>
+                                <div class="el-card-name">Form</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="element-group">
+                        <div class="element-group-label">⚡ Advanced</div>
+                        <div class="elements-grid">
+                            <div class="el-card" draggable="true" data-type="alert">
+                                <div class="el-card-icon">⚠️</div>
+                                <div class="el-card-name">Alert</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="quote">
+                                <div class="el-card-icon">❝</div>
+                                <div class="el-card-name">Quote</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="list">
+                                <div class="el-card-icon">☰</div>
+                                <div class="el-card-name">List</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="table">
+                                <div class="el-card-icon">TBL</div>
+                                <div class="el-card-name">Table</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="progress-bar">
+                                <div class="el-card-icon">▬</div>
+                                <div class="el-card-name">Progress</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="countdown">
+                                <div class="el-card-icon">⏱️</div>
+                                <div class="el-card-name">Countdown</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="html-embed">
+                                <div class="el-card-icon">&lt;/&gt;</div>
+                                <div class="el-card-name">HTML Embed</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="js-code">
+                                <div class="el-card-icon">JS</div>
+                                <div class="el-card-name">JS Code</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="social-links">
+                                <div class="el-card-icon">🔗</div>
+                                <div class="el-card-name">Social Links</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="pricing-card">
+                                <div class="el-card-icon">💳</div>
+                                <div class="el-card-name">Pricing Card</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="tabs">
+                                <div class="el-card-icon">TB</div>
+                                <div class="el-card-name">Tabs</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="accordion">
+                                <div class="el-card-icon">AC</div>
+                                <div class="el-card-name">Accordion</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="element-group">
+                        <div class="element-group-label">💬 Social</div>
+                        <div class="elements-grid">
+                            <div class="el-card" draggable="true" data-type="stats-row">
+                                <div class="el-card-icon">📈</div>
+                                <div class="el-card-name">Stats Row</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="logo-cloud">
+                                <div class="el-card-icon">LC</div>
+                                <div class="el-card-name">Logo Cloud</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="contact-card">
+                                <div class="el-card-icon">CT</div>
+                                <div class="el-card-name">Contact</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="steps">
+                                <div class="el-card-icon">1-3</div>
+                                <div class="el-card-name">Steps</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="feature-list">
+                                <div class="el-card-icon">OK</div>
+                                <div class="el-card-name">Feature List</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="testimonial-card">
+                                <div class="el-card-icon">REV</div>
+                                <div class="el-card-name">Review Card</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="element-group">
+                        <div class="element-group-label">🧩 Advanced+</div>
+                        <div class="elements-grid">
+                            <div class="el-card" draggable="true" data-type="icon-box">
+                                <div class="el-card-icon">🎁</div>
+                                <div class="el-card-name">Icon Box</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="gradient-heading">
+                                <div class="el-card-icon">Aa</div>
+                                <div class="el-card-name">Gradient Title</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="highlight-box">
+                                <div class="el-card-icon">💡</div>
+                                <div class="el-card-name">Highlight</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="rating">
+                                <div class="el-card-icon">★</div>
+                                <div class="el-card-name">Rating</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="avatar">
+                                <div class="el-card-icon">🧑</div>
+                                <div class="el-card-name">Avatar</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="flip-card">
+                                <div class="el-card-icon">🔄</div>
+                                <div class="el-card-name">Flip Card</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="breadcrumb">
+                                <div class="el-card-icon">›</div>
+                                <div class="el-card-name">Breadcrumb</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="tag-cloud">
+                                <div class="el-card-icon">#</div>
+                                <div class="el-card-name">Tags</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="image-overlay">
+                                <div class="el-card-icon">🖼️</div>
+                                <div class="el-card-name">Image Overlay</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="stat-counter">
+                                <div class="el-card-icon">🔢</div>
+                                <div class="el-card-name">Counter</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="timeline-item">
+                                <div class="el-card-icon">┃</div>
+                                <div class="el-card-name">Timeline</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="profile-card">
+                                <div class="el-card-icon">👤</div>
+                                <div class="el-card-name">Profile</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="download-card">
+                                <div class="el-card-icon">📄</div>
+                                <div class="el-card-name">Download</div>
+                            </div>
+                            <div class="el-card" draggable="true" data-type="notice-banner">
+                                <div class="el-card-icon">📢</div>
+                                <div class="el-card-name">Notice Bar</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sections Panel -->
+            <div class="panel-content" id="panel-sections">
+                <div class="panel-sections-list" id="panelSectionsList">
+                    <!-- rendered by JS -->
+                </div>
+                <button class="add-section-btn" id="addSectionFromPanel">+ Add Section</button>
+            </div>
+
+            <!-- History Panel -->
+            <div class="panel-content" id="panel-history">
+                <div class="history-list" id="panelHistoryList" style="display:flex;flex-direction:column;gap:4px;padding:0.5rem">
+                    <!-- rendered by JS -->
+                </div>
+            </div>
+
+            <!-- Settings Panel -->
+            <div class="panel-content" id="panel-settings">
+                <div class="settings-body">
+
+                    <!-- CDN Manager -->
+                    <div class="settings-block">
+                        <div class="settings-block-title">📦 CDN Libraries</div>
+                        <div class="cdn-presets-grid" id="cdnPresetsGrid">
+                            <!-- rendered by JS -->
+                        </div>
+                        <div class="cdn-list" id="cdnList">
+                            <!-- rendered by JS -->
+                        </div>
+                        <div style="display:flex;gap:0.4rem;margin-top:0.5rem">
+                            <input type="url" id="cdnCustomUrl" class="prop-input" placeholder="https://cdn.example.com/lib.css" style="flex:1;font-size:0.72rem">
+                            <button class="settings-add-btn" id="cdnAddBtn">Add</button>
+                        </div>
+                    </div>
+
+                    <!-- Google Fonts -->
+                    <div class="settings-block">
+                        <div class="settings-block-title">🔤 Google Fonts</div>
+                        <div class="font-presets-grid" id="fontPresetsGrid">
+                            <!-- rendered by JS -->
+                        </div>
+                        <div style="display:flex;gap:0.4rem;margin-top:0.5rem">
+                            <input type="text" id="fontCustomName" class="prop-input" placeholder="Font name e.g. Ubuntu" style="flex:1;font-size:0.72rem">
+                            <button class="settings-add-btn" id="fontAddBtn">Add</button>
+                        </div>
+                    </div>
+
+                    <!-- Custom CSS -->
+                    <div class="settings-block">
+                        <div class="settings-block-title">🎨 Custom CSS</div>
+                        <textarea id="settingsCssEditor" class="settings-css-editor" placeholder="/* Your custom CSS here */
+body { }
+.my-class { }"></textarea>
+                        <button class="settings-apply-btn" id="settingsApplyCss">Apply CSS</button>
+                    </div>
+
+                    <!-- Custom JavaScript -->
+                    <div class="settings-block">
+                        <div class="settings-block-title">Custom JavaScript</div>
+                        <textarea id="settingsJsEditor" class="settings-css-editor settings-js-editor" placeholder="// Your custom JavaScript here
+document.addEventListener('DOMContentLoaded', function () {
+  console.log('Fronty custom JS loaded');
+});"></textarea>
+                        <button class="settings-apply-btn" id="settingsApplyJs">Apply JavaScript</button>
+                        <p class="settings-help-text">Runs inside the preview and stays in exported HTML. Use carefully because this code runs on the final page.</p>
+                    </div>
+
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- CENTER: Canvas -->
+        <main class="builder-canvas-area" id="canvasArea">
+
+            <div class="canvas-wrapper" id="canvasWrapper">
+                <div class="canvas-frame desktop" id="canvasFrame">
+                    <iframe
+                        id="builderIframe"
+                        src="index.html?builder=1"
+                        title="Page preview"
+                        frameborder="0"
+                        allowtransparency="true"
+                    ></iframe>
+                </div>
+            </div>
+
+            <!-- Drop Hint (shown when dragging from library) -->
+            <div class="global-drop-hint" id="globalDropHint" style="display:none">
+                Drop element on a section in the canvas
+            </div>
+
+            <!-- Selection toolbar (floats near selected element) -->
+            <div class="element-floating-toolbar" id="floatingToolbar" style="display:none">
+                <button class="ft-btn" id="ftMoveUp" title="Move up">↑</button>
+                <button class="ft-btn" id="ftMoveDown" title="Move down">↓</button>
+                <button class="ft-btn" id="ftDuplicate" title="Duplicate">⧉</button>
+                <div class="ft-divider"></div>
+                <button class="ft-btn danger" id="ftDelete" title="Delete">🗑</button>
+            </div>
+        </main>
+
+        <!-- RIGHT PANEL: Properties -->
+        <aside class="builder-right-panel" id="rightPanel">
+            <div class="panel-header">
+                <span class="panel-header-title" id="propPanelTitle">Properties</span>
+                <span class="panel-header-sub" id="propPanelSub">Select an element to edit</span>
+            </div>
+
+            <!-- No selection state -->
+            <div id="propNoSelection" class="prop-no-selection">
+                <div class="prop-empty-icon">👆</div>
+                <p>Click on any element in the canvas to edit it</p>
+            </div>
+
+            <!-- Properties content -->
+            <div id="propContent" class="prop-content" style="display:none">
+                <div id="propFields" class="prop-fields">
+                    <!-- Dynamically populated by builder.js -->
+                </div>
+            </div>
+
+            <!-- Section properties (when section selected) -->
+            <div id="propSectionContent" class="prop-content" style="display:none">
+                <div class="prop-section-header">
+                    <strong id="propSectionName"></strong>
+                    <div class="prop-section-actions">
+                        <button class="prop-icon-btn" id="propSecMoveUp" title="Move section up">↑</button>
+                        <button class="prop-icon-btn" id="propSecMoveDown" title="Move section down">↓</button>
+                        <button class="prop-icon-btn danger" id="propSecDelete" title="Delete section">🗑</button>
+                    </div>
+                </div>
+                <div class="prop-group">
+                    <label class="prop-label">Section Background</label>
+                    <div class="prop-color-row">
+                        <input type="color" id="propSecBg" class="prop-color-input" value="#0a0e1a">
+                        <input type="text" id="propSecBgText" class="prop-input" placeholder="or CSS value" style="flex:1">
+                    </div>
+                </div>
+                <div class="prop-group">
+                    <label class="prop-label">Padding (top/bottom)</label>
+                    <div style="display:flex;gap:0.5rem">
+                        <input type="number" id="propSecPadTop" class="prop-input" placeholder="top" min="0" max="200">
+                        <input type="number" id="propSecPadBot" class="prop-input" placeholder="bottom" min="0" max="200">
+                    </div>
+                </div>
+                <div class="prop-group">
+                    <label class="prop-label">Visibility</label>
+                    <label class="prop-toggle">
+                        <input type="checkbox" id="propSecVisible" checked>
+                        <span class="prop-toggle-knob"></span>
+                        <span class="prop-toggle-label">Show on page</span>
+                    </label>
+                </div>
+                <div class="prop-group">
+                    <label class="prop-label">Background Image URL</label>
+                    <input type="text" id="propSecBgImg" class="prop-input" placeholder="https://... or leave empty">
+                    <div style="display:flex;gap:0.4rem;margin-top:0.35rem">
+                        <select id="propSecBgSize" class="prop-input" style="flex:1">
+                            <option value="cover">Cover</option>
+                            <option value="contain">Contain</option>
+                            <option value="auto">Auto</option>
+                        </select>
+                        <select id="propSecBgPos" class="prop-input" style="flex:1">
+                            <option value="center">Center</option>
+                            <option value="top">Top</option>
+                            <option value="bottom">Bottom</option>
+                            <option value="left">Left</option>
+                            <option value="right">Right</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="prop-group">
+                    <label class="prop-label">Padding Left / Right (px)</label>
+                    <div style="display:flex;gap:0.5rem">
+                        <input type="number" id="propSecPadLeft" class="prop-input" placeholder="left" min="0" max="200">
+                        <input type="number" id="propSecPadRight" class="prop-input" placeholder="right" min="0" max="200">
+                    </div>
+                </div>
+                <div class="prop-group">
+                    <label class="prop-label">Min Height (px)</label>
+                    <input type="number" id="propSecMinH" class="prop-input" placeholder="e.g. 500" min="0" max="2000">
+                </div>
+                <div class="prop-group">
+                    <label class="prop-label">Section ID (anchor)</label>
+                    <input type="text" id="propSecId" class="prop-input" placeholder="e.g. products, hero">
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Add Section Modal -->
+    <div class="b-modal-overlay" id="addSectionModal">
+        <div class="b-modal">
+            <div class="b-modal-header">
+                <h3>Add Section</h3>
+                <button onclick="closeAddSectionModal()" class="b-modal-close">✕</button>
+            </div>
+            <div class="b-modal-body">
+                <div class="section-templates-grid" id="sectionTemplatesGrid">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file inputs for image upload -->
+    <input type="file" id="builderImgUpload" accept="image/*" style="display:none">
+    <input type="file" id="builderSlideUpload" accept="image/*" style="display:none">
+
+    <script src="js/builder.js"></script>
+</body>
+</html>

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel — Fronty</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin-pro.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+</head>
+<body class="admin-body">
+
+    <!-- ═══════════ LOGIN OVERLAY ═══════════ -->
+    <div id="loginOverlay" class="admin-login-overlay">
+        <div class="admin-login-orb orb-a"></div>
+        <div class="admin-login-orb orb-b"></div>
+        <div class="admin-login-orb orb-c"></div>
+        <div class="admin-login-card fade-in" style="opacity:0">
+            <div class="login-icon-wrap">
+                <div class="login-icon">🛡️</div>
+                <div class="login-icon-ring"></div>
+            </div>
+            <h1 class="login-title">Admin Access</h1>
+            <p class="login-sub">Fronty Control Panel</p>
+            <div class="login-fields">
+                <div class="login-input-wrap">
+                    <span class="login-input-icon">🔑</span>
+                    <input type="password" id="loginPassword" class="login-input" placeholder="Enter admin password" autofocus>
+                </div>
+                <p id="loginError" class="login-error" style="display:none">❌ Wrong password. Try again.</p>
+                <button id="loginBtn" class="login-btn">
+                    <span>🔓</span> Unlock Dashboard
+                </button>
+            </div>
+            <p class="login-hint">Password: <code>admin123</code></p>
+        </div>
+    </div>
+
+    <!-- ═══════════ MAIN ADMIN LAYOUT ═══════════ -->
+    <div id="adminApp" class="admin-app" style="display:none">
+
+        <!-- SIDEBAR -->
+        <aside id="adminSidebar" class="admin-sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo">⚡</div>
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-name">Fronty</span>
+                    <span class="sidebar-brand-role">Admin Panel</span>
+                </div>
+                <button id="sidebarToggle" class="sidebar-collapse-btn" title="Toggle sidebar">◀</button>
+            </div>
+
+            <div class="sidebar-admin-info">
+                <div class="sidebar-avatar">A</div>
+                <div class="sidebar-admin-details">
+                    <span class="sidebar-admin-name">Administrator</span>
+                    <span class="sidebar-admin-badge">● Online</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="sidebar-nav-group">
+                    <span class="sidebar-nav-label">Overview</span>
+                    <button class="sidebar-nav-item active" data-page="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                        <span class="nav-badge" id="navBadgeDashboard"></span>
+                    </button>
+                </div>
+                <div class="sidebar-nav-group">
+                    <span class="sidebar-nav-label">Store</span>
+                    <button class="sidebar-nav-item" data-page="products">
+                        <span class="nav-icon">📦</span>
+                        <span class="nav-text">Products</span>
+                        <span class="nav-badge" id="navBadgeProducts"></span>
+                    </button>
+                    <button class="sidebar-nav-item" data-page="sellers">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-text">Sellers</span>
+                        <span class="nav-badge" id="navBadgeSellers"></span>
+                    </button>
+                    <button class="sidebar-nav-item" data-page="orders">
+                        <span class="nav-icon">🛒</span>
+                        <span class="nav-text">Orders</span>
+                        <span class="nav-badge" id="navBadgeOrders"></span>
+                    </button>
+                </div>
+                <div class="sidebar-nav-group">
+                    <span class="sidebar-nav-label">Website</span>
+                    <a href="builder.html" class="sidebar-nav-item" style="text-decoration:none">
+                        <span class="nav-icon">🏗️</span>
+                        <span class="nav-text">Page Builder</span>
+                        <span style="font-size:0.6rem;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:0.1rem 0.35rem;border-radius:9999px;margin-left:auto" class="nav-text">NEW</span>
+                    </a>
+                    <button class="sidebar-nav-item" data-page="sections">
+                        <span class="nav-icon">🧩</span>
+                        <span class="nav-text">Sections</span>
+                    </button>
+                    <button class="sidebar-nav-item" data-page="settings">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Settings</span>
+                    </button>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="index.html" class="sidebar-footer-link">
+                    <span>🏪</span><span class="nav-text">View Store</span>
+                </a>
+                <button id="logoutBtn" class="sidebar-logout-btn">
+                    <span>🚪</span><span class="nav-text">Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="admin-main">
+
+            <!-- TOP BAR -->
+            <header class="admin-topbar">
+                <div class="topbar-left">
+                    <button id="mobileSidebarToggle" class="topbar-menu-btn">☰</button>
+                    <div class="topbar-breadcrumb">
+                        <span id="topbarPageTitle" class="topbar-page-title">Dashboard</span>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="topbar-time" id="topbarTime"></div>
+                    <button class="topbar-refresh-btn" id="topbarRefreshBtn" title="Refresh data">🔄</button>
+                    <div class="topbar-user">
+                        <div class="topbar-avatar">A</div>
+                        <span class="topbar-username">Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- PAGE: DASHBOARD -->
+            <section class="admin-page active" id="page-dashboard">
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <div class="welcome-text">
+                        <h1 class="welcome-title">Welcome back, Admin 👋</h1>
+                        <p class="welcome-sub">Here's what's happening with your store today.</p>
+                    </div>
+                    <button class="btn-primary-pro" id="quickAddProductBtn">➕ Add Product</button>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-pro">
+                        <div class="stat-pro-icon" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">📦</div>
+                        <div class="stat-pro-info">
+                            <span class="stat-pro-label">Total Products</span>
+                            <span class="stat-pro-value" id="statTotal">—</span>
+                        </div>
+                        <div class="stat-pro-trend up">+2 today</div>
+                    </div>
+                    <div class="stat-pro">
+                        <div class="stat-pro-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)">⏳</div>
+                        <div class="stat-pro-info">
+                            <span class="stat-pro-label">Pending Review</span>
+                            <span class="stat-pro-value" id="statPending">—</span>
+                        </div>
+                        <div class="stat-pro-trend warning">Needs action</div>
+                    </div>
+                    <div class="stat-pro">
+                        <div class="stat-pro-icon" style="background:linear-gradient(135deg,#10b981,#059669)">✅</div>
+                        <div class="stat-pro-info">
+                            <span class="stat-pro-label">Approved</span>
+                            <span class="stat-pro-value" id="statApproved">—</span>
+                        </div>
+                        <div class="stat-pro-trend up">Live in store</div>
+                    </div>
+                    <div class="stat-pro">
+                        <div class="stat-pro-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626)">❌</div>
+                        <div class="stat-pro-info">
+                            <span class="stat-pro-label">Rejected</span>
+                            <span class="stat-pro-value" id="statRejected">—</span>
+                        </div>
+                        <div class="stat-pro-trend down">Declined</div>
+                    </div>
+                    <div class="stat-pro">
+                        <div class="stat-pro-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">👥</div>
+                        <div class="stat-pro-info">
+                            <span class="stat-pro-label">Total Sellers</span>
+                            <span class="stat-pro-value" id="statSellers">—</span>
+                        </div>
+                        <div class="stat-pro-trend up">Registered</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions-section">
+                    <h2 class="section-heading">Quick Actions</h2>
+                    <div class="quick-actions-grid">
+                        <button class="quick-action-card" onclick="switchPage('products')">
+                            <div class="qa-icon">📦</div>
+                            <div class="qa-label">Manage Products</div>
+                        </button>
+                        <button class="quick-action-card" onclick="switchPage('sellers')">
+                            <div class="qa-icon">👥</div>
+                            <div class="qa-label">Manage Sellers</div>
+                        </button>
+                        <button class="quick-action-card" onclick="switchPage('sections')">
+                            <div class="qa-icon">🧩</div>
+                            <div class="qa-label">Edit Sections</div>
+                        </button>
+                        <button class="quick-action-card" onclick="switchPage('settings')">
+                            <div class="qa-icon">⚙️</div>
+                            <div class="qa-label">Site Settings</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pending Items Preview -->
+                <div class="dashboard-pending-preview">
+                    <div class="section-heading-row">
+                        <h2 class="section-heading">Pending Review</h2>
+                        <button class="link-btn" onclick="switchPage('products')">View all →</button>
+                    </div>
+                    <div id="dashPendingList" class="space-y-3"></div>
+                </div>
+            </section>
+
+            <!-- PAGE: PRODUCTS -->
+            <section class="admin-page" id="page-products">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Products</h1>
+                        <p class="page-sub">Manage all store products</p>
+                    </div>
+                    <button class="btn-primary-pro" id="addProductBtn">➕ Add Product</button>
+                </div>
+
+                <!-- Product Filters -->
+                <div class="products-filter-bar">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-status="pending">⏳ Pending <span class="filter-tab-count" id="tabCountPending">0</span></button>
+                        <button class="filter-tab" data-status="approved">✅ Approved <span class="filter-tab-count" id="tabCountApproved">0</span></button>
+                        <button class="filter-tab" data-status="rejected">❌ Rejected <span class="filter-tab-count" id="tabCountRejected">0</span></button>
+                        <button class="filter-tab" data-status="all">📋 All</button>
+                    </div>
+                    <div class="search-bar">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="productSearch" class="search-input" placeholder="Search products...">
+                    </div>
+                </div>
+
+                <div id="itemsList" class="products-list"></div>
+            </section>
+
+            <!-- PAGE: SELLERS -->
+            <section class="admin-page" id="page-sellers">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Sellers</h1>
+                        <p class="page-sub" id="sellersSubtitle">All registered sellers</p>
+                    </div>
+                    <div class="search-bar" style="width:280px">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="sellerSearch" class="search-input" placeholder="Search sellers...">
+                    </div>
+                </div>
+                <div id="sellersList" class="space-y-4"></div>
+            </section>
+
+            <!-- PAGE: SECTIONS MANAGER -->
+            <section class="admin-page" id="page-sections">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Sections Manager</h1>
+                        <p class="page-sub">Control what appears on your homepage</p>
+                    </div>
+                    <button class="btn-primary-pro" id="addSectionBtn">➕ Add Section</button>
+                </div>
+
+                <div class="sections-info-banner">
+                    <div class="sections-info-icon">💡</div>
+                    <div>
+                        <strong>Drag & Drop</strong> to reorder sections. Toggle visibility to show/hide from the homepage. Changes save to <code>index.html</code> via the API.
+                    </div>
+                </div>
+
+                <div id="sectionsList" class="sections-list">
+                    <!-- Sections rendered by JS -->
+                </div>
+            </section>
+
+            <!-- PAGE: SETTINGS -->
+            <!-- ═══════════ ORDERS PAGE ═══════════ -->
+            <section class="admin-page" id="page-orders">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Mobile Orders</h1>
+                        <p class="page-sub">Orders placed via the Fronty mobile app</p>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center">
+                        <select id="ordersStatusFilter" class="setting-input" style="width:160px" onchange="AdminOrders.load()">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <button class="btn-primary-pro" onclick="AdminOrders.load()">🔄 Refresh</button>
+                    </div>
+                </div>
+                <div id="ordersTableWrap">
+                    <div class="table-loading" id="ordersLoading" style="display:none">Loading orders…</div>
+                    <div class="table-wrap" id="ordersTable" style="display:none">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Customer</th>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Address</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="ordersEmpty" style="display:none;text-align:center;padding:60px 0;color:var(--text-muted)">
+                        <div style="font-size:3rem;margin-bottom:12px">📭</div>
+                        <p style="font-size:1.1rem">No orders found</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-page" id="page-settings">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Site Settings</h1>
+                        <p class="page-sub">Control global site configuration</p>
+                    </div>
+                    <button class="btn-primary-pro" id="saveSettingsBtn">💾 Save Settings</button>
+                </div>
+
+                <div class="settings-grid">
+                    <!-- General -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <span class="settings-card-icon">🌐</span>
+                            <h3>General</h3>
+                        </div>
+                        <div class="settings-body">
+                            <div class="setting-row">
+                                <label class="setting-label">Site Name</label>
+                                <input type="text" id="setSiteName" class="setting-input" value="Fronty Store">
+                            </div>
+                            <div class="setting-row">
+                                <label class="setting-label">Tagline</label>
+                                <input type="text" id="setSiteTagline" class="setting-input" value="Buy &amp; Sell Electronics">
+                            </div>
+                            <div class="setting-row">
+                                <label class="setting-label">Contact Email</label>
+                                <input type="email" id="setContactEmail" class="setting-input" placeholder="admin@example.com">
+                            </div>
+                            <div class="setting-row">
+                                <label class="setting-label">WhatsApp Number</label>
+                                <input type="text" id="setWhatsapp" class="setting-input" placeholder="+20 ...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <span class="settings-card-icon">📦</span>
+                            <h3>Products</h3>
+                        </div>
+                        <div class="settings-body">
+                            <div class="setting-row">
+                                <label class="setting-label">Auto-approve submissions</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="setAutoApprove">
+                                    <span class="toggle-knob"></span>
+                                </label>
+                            </div>
+                            <div class="setting-row">
+                                <label class="setting-label">Allow image uploads</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="setAllowImages" checked>
+                                    <span class="toggle-knob"></span>
+                                </label>
+                            </div>
+                            <div class="setting-row">
+                                <label class="setting-label">Products per page</label>
+                                <input type="number" id="setPerPage" class="setting-input" value="12" min="4" max="100">
+                            </div>
+                            <div class="setting-row">
+                                <label class="setting-label">Currency symbol</label>
+                                <input type="text" id="setCurrency" class="setting-input" value="$" style="width:80px">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <span class="settings-card-icon">🔐</span>
+                            <h3>Security</h3>
+                        </div>
+                        <div class="settings-body">
+                            <div class="setting-row">
+                                <label class="setting-label">Change Admin Password</label>
+                            </div>
+                            <div class="space-y-3 mt-1">
+                                <input type="password" id="setNewPassword" class="setting-input" placeholder="New password">
+                                <input type="password" id="setConfirmPassword" class="setting-input" placeholder="Confirm password">
+                                <button class="btn-secondary-pro" id="changePasswordBtn">🔑 Update Password</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appearance -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <span class="settings-card-icon">🎨</span>
+                            <h3>Appearance</h3>
+                        </div>
+                        <div class="settings-body">
+                            <div class="setting-row">
+                                <label class="setting-label">Primary Color</label>
+                                <input type="color" id="setPrimaryColor" value="#6366f1" class="color-picker">
+                            </div>
+                            <div class="setting-row">
+                                <label class="setting-label">Accent Color</label>
+                                <input type="color" id="setAccentColor" value="#8b5cf6" class="color-picker">
+                            </div>
+                            <div class="setting-row">
+                                <label class="setting-label">Show Prices</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="setShowPrices" checked>
+                                    <span class="toggle-knob"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div><!-- /admin-main -->
+    </div><!-- /adminApp -->
+
+    <!-- ═══════════ PRODUCT MODAL ═══════════ -->
+    <div class="pro-modal-overlay" id="productModal">
+        <div class="pro-modal max-w-2xl">
+            <div class="pro-modal-header">
+                <h2 id="productModalTitle" class="pro-modal-title">Add Product</h2>
+                <button onclick="closeProductModal()" class="pro-modal-close">✕</button>
+            </div>
+            <form id="productForm" class="pro-modal-body space-y-4">
+                <input type="hidden" id="editProductId">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="pro-label">Title *</label>
+                        <input type="text" id="modalTitle_input" class="pro-input" placeholder="Product title" required>
+                    </div>
+                    <div>
+                        <label class="pro-label">Price *</label>
+                        <input type="number" id="modalPrice" class="pro-input" placeholder="0.00" step="0.01" required>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="pro-label">Category</label>
+                        <select id="modalCategory" class="pro-input">
+                            <option value="phones">📱 Phones</option>
+                            <option value="laptops">💻 Laptops & Tablets</option>
+                            <option value="accessories">🎧 Accessories</option>
+                            <option value="gaming">🎮 Gaming</option>
+                            <option value="other">📦 Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="pro-label">Condition</label>
+                        <select id="modalCondition" class="pro-input">
+                            <option value="new">New</option>
+                            <option value="like-new" selected>Like New</option>
+                            <option value="used">Used</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="pro-label">Description</label>
+                    <textarea id="modalDescription" class="pro-input" rows="3" placeholder="Description..."></textarea>
+                </div>
+                <div>
+                    <label class="pro-label">Status</label>
+                    <select id="modalStatus" class="pro-input">
+                        <option value="approved">✅ Approved</option>
+                        <option value="pending">⏳ Pending</option>
+                        <option value="rejected">❌ Rejected</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="pro-label">Seller Name</label>
+                        <input type="text" id="modalSellerName" class="pro-input" placeholder="Seller name">
+                    </div>
+                    <div>
+                        <label class="pro-label">WhatsApp</label>
+                        <input type="tel" id="modalSellerPhone" class="pro-input" placeholder="+20 ...">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="pro-label">Email</label>
+                        <input type="email" id="modalSellerEmail" class="pro-input" placeholder="email@...">
+                    </div>
+                    <div>
+                        <label class="pro-label">Location</label>
+                        <input type="text" id="modalLocation" class="pro-input" placeholder="City, Country">
+                    </div>
+                </div>
+                <div class="pro-modal-footer">
+                    <button type="button" onclick="closeProductModal()" class="btn-ghost-pro">Cancel</button>
+                    <button type="submit" class="btn-primary-pro" id="productModalSubmit">💾 Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════ SELLER MODAL ═══════════ -->
+    <div class="pro-modal-overlay" id="sellerModal">
+        <div class="pro-modal">
+            <div class="pro-modal-header">
+                <h2 class="pro-modal-title">Edit Seller</h2>
+                <button onclick="closeSellerModal()" class="pro-modal-close">✕</button>
+            </div>
+            <form id="sellerForm" class="pro-modal-body space-y-4">
+                <input type="hidden" id="editSellerId">
+                <div>
+                    <label class="pro-label">Name</label>
+                    <input type="text" id="editSellerName" class="pro-input" required>
+                </div>
+                <div>
+                    <label class="pro-label">WhatsApp</label>
+                    <input type="tel" id="editSellerPhone" class="pro-input">
+                </div>
+                <div>
+                    <label class="pro-label">Email</label>
+                    <input type="email" id="editSellerEmail" class="pro-input">
+                </div>
+                <div>
+                    <label class="pro-label">Location</label>
+                    <input type="text" id="editSellerLocation" class="pro-input">
+                </div>
+                <div class="pro-modal-footer">
+                    <button type="button" onclick="closeSellerModal()" class="btn-ghost-pro">Cancel</button>
+                    <button type="submit" class="btn-primary-pro">💾 Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════ SECTION MODAL ═══════════ -->
+    <div class="pro-modal-overlay" id="sectionModal">
+        <div class="pro-modal max-w-xl">
+            <div class="pro-modal-header">
+                <h2 id="sectionModalTitle" class="pro-modal-title">Add Section</h2>
+                <button onclick="closeSectionModal()" class="pro-modal-close">✕</button>
+            </div>
+            <form id="sectionForm" class="pro-modal-body space-y-4">
+                <input type="hidden" id="editSectionId">
+                <div>
+                    <label class="pro-label">Section Title</label>
+                    <input type="text" id="sectionTitle" class="pro-input" placeholder="e.g. Flash Deals" required>
+                </div>
+                <div>
+                    <label class="pro-label">Section Type</label>
+                    <select id="sectionType" class="pro-input">
+                        <option value="banner">🖼️ Banner / Hero</option>
+                        <option value="products">📦 Products Grid</option>
+                        <option value="categories">🏷️ Categories</option>
+                        <option value="testimonials">💬 Testimonials</option>
+                        <option value="cta">📣 Call To Action</option>
+                        <option value="custom">✏️ Custom HTML</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="pro-label">Description / Subtitle</label>
+                    <input type="text" id="sectionSubtitle" class="pro-input" placeholder="Short description shown under the title">
+                </div>
+                <div id="sectionCustomHtmlWrap" style="display:none">
+                    <label class="pro-label">Custom HTML Content</label>
+                    <textarea id="sectionCustomHtml" class="pro-input font-mono text-xs" rows="6" placeholder="<div>Your HTML here...</div>"></textarea>
+                </div>
+                <div>
+                    <label class="pro-label">Icon / Emoji</label>
+                    <input type="text" id="sectionIcon" class="pro-input" placeholder="🔥" style="max-width:100px">
+                </div>
+                <div class="setting-row">
+                    <label class="pro-label">Visible on homepage</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="sectionVisible" checked>
+                        <span class="toggle-knob"></span>
+                    </label>
+                </div>
+                <div class="pro-modal-footer">
+                    <button type="button" onclick="closeSectionModal()" class="btn-ghost-pro">Cancel</button>
+                    <button type="submit" class="btn-primary-pro">💾 Save Section</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════ CONFIRM DIALOG ═══════════ -->
+    <div class="pro-modal-overlay" id="confirmModal">
+        <div class="pro-modal" style="max-width:400px">
+            <div class="pro-modal-header">
+                <h2 class="pro-modal-title" id="confirmTitle">Confirm</h2>
+                <button onclick="rejectConfirm()" class="pro-modal-close">✕</button>
+            </div>
+            <div class="pro-modal-body">
+                <p id="confirmMessage" class="text-slate-300"></p>
+            </div>
+            <div class="pro-modal-footer">
+                <button onclick="rejectConfirm()" class="btn-ghost-pro">Cancel</button>
+                <button onclick="resolveConfirm()" class="btn-danger-pro" id="confirmOkBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/admin-pro.js"></script>
+    <script src="js/admin-orders.js"></script>
+</body>
+</html>
